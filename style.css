@@ -2,8 +2,8 @@
 
 html {
     box-sizing: border-box;
-    overflow: hidden;
     color: red !important;
+    overflow: hidden;
 }
 
 body {
@@ -473,6 +473,9 @@ h3 {
 
 /** Responsive adjustments **/
 @media screen and (max-width: 740px) {
+    html {
+        overflow: scroll;
+    }
     body {
         flex-direction: column;
     }

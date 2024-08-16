@@ -607,6 +607,28 @@ function openTab(tabId) {
         .classList.add("active");
 }
 
+// Mobil cihaz olup olmadığını kontrol etme fonksiyonu
+function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.matchMedia("(max-width: 740px)").matches;
+}
+
+// Volume slider'ı gizle
+function hideVolumeSlider() {
+    if (isMobileDevice()) {
+        const volumeSlider = document.getElementById('volume-slider');
+        const volumeControl = document.querySelector('.volume-control');
+        if (volumeSlider) {
+            volumeSlider.style.display = 'none';
+        }
+        if (volumeControl) {
+            volumeControl.style.display = 'none';
+        }
+    }
+}
+
+// Sayfa yüklendiğinde kontrolü gerçekleştir
+document.addEventListener('DOMContentLoaded', hideVolumeSlider);
+
 // Event Listeners //
 playBtn.addEventListener("click", togglePlay);
 prevBtn.addEventListener("click", () => {

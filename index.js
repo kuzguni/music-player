@@ -608,11 +608,14 @@ function openTab(tabId) {
 }
 
 // Mobil cihaz olup olmadığını kontrol etme fonksiyonu
+// Cihazın mobil olup olmadığını kontrol eden fonksiyon
+
+// Cihazın mobil olup olmadığını kontrol eden fonksiyon
 function isMobileDevice() {
-    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.matchMedia("(max-width: 740px)").matches;
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
-// Volume slider'ı gizle
+// Volume slider'ı gizleyen fonksiyon
 function hideVolumeSlider() {
     if (isMobileDevice()) {
         const volumeSlider = document.getElementById('volume-slider');
@@ -625,6 +628,12 @@ function hideVolumeSlider() {
         }
     }
 }
+
+// Sayfa yüklendiğinde kontrolü gerçekleştir
+document.addEventListener('DOMContentLoaded', hideVolumeSlider);
+
+// Sayfa yüklendiğinde kontrolü gerçekleştir
+document.addEventListener('DOMContentLoaded', hideVolumeSlider);
 
 // Sayfa yüklendiğinde kontrolü gerçekleştir
 document.addEventListener('DOMContentLoaded', hideVolumeSlider);

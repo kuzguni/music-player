@@ -1,4 +1,3 @@
-
 const image = document.getElementById("cover"),
     title = document.getElementById("music-title"),
     artist = document.getElementById("music-artist"),
@@ -135,10 +134,10 @@ function loadMusic(song) {
     artist.textContent = song.artist;
     image.src = song.cover;
     background.src = song.cover;
-    
+
     updateFavoriteIcon();
     updatePlaylistButtons();
-    
+
     applyColor(song);
 }
 
@@ -360,7 +359,7 @@ function calculateAverageColor(imageSrc, iconClasses) {
             this.style.background = `linear-gradient(to right, ${darkerColor} ${volumePercent}%, #fff ${volumePercent}%)`;
         });
         volumeSlider.dispatchEvent(new Event("input"));
-        
+
         /** ProgressBar renk **/
         progress.style.backgroundColor = darkerColor;
 
@@ -415,7 +414,7 @@ function applyColor(song) {
 // Playlist oluşturma //
 function createPlaylist() {
     const playlist = document.getElementById("playlist");
-    
+
     songs.forEach((song) => {
         const li = document.createElement("li");
         li.innerHTML = `
@@ -511,7 +510,7 @@ function addSongToPlaylist(song) {
     /** Playlistte şarkının zaten olup olmadığını kontrol et **/
     if (![...favPlaylist.children].some(li => li.dataset.path === song.path)) {
         const li = document.createElement("li");
-        li.dataset.path = song.path; 
+        li.dataset.path = song.path;
         li.innerHTML = `
             <img src="${song.cover}" alt="${song.displayName} cover" class="playlist-cover">
             <div class="song-info">
@@ -641,7 +640,7 @@ prevBtn.addEventListener("click", () => {
     } else {
         music.currentTime = 0;
         if (!isPlaying) {
-            music.play(); 
+            music.play();
             isPlaying = true;
             playBtn.classList.replace("fa-play", "fa-pause");
             playBtn.setAttribute("title", "Pause");
@@ -672,7 +671,7 @@ document.addEventListener('keydown', function(event) {
         if (music.currentTime < 10) {
             music.currentTime = 0;
             if (!isPlaying) {
-                music.play(); 
+                music.play();
                 isPlaying = true;
                 playBtn.classList.replace("fa-play", "fa-pause");
                 playBtn.setAttribute("title", "Pause");
@@ -699,4 +698,3 @@ createPlaylist();
 loadFavorites();
 updateFavoriteIcon();
 playPauseOnPlaylist();
-

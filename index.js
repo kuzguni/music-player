@@ -73,13 +73,13 @@ const songs = [
         artist: "Finneas",
     },
     {
-        path: "assets/cordiseps-veda-mektubu.mp3",
+        path: "assets/cordiseps-veda-mektubu-2.mp3",
         cover: "assets/cordiseps-veda-mektubu.jpg",
         displayName: "Veda Mektubu 2",
         artist: "Cordiseps",
     },
     {
-        path: "assets/finneas-for-cryin-out-loud.mp3",
+        path: "assets/finneas-for-cryin-out-loud-2.mp3",
         cover: "assets/finneas-for-cryin-out-loud.jpg",
         displayName: "For Cryin Out Loud 2",
         artist: "Finneas",

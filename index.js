@@ -112,6 +112,7 @@ function playMusic() {
     playBtn.setAttribute("title", "Pause");
     music.play();
 
+    updatePlaylist();
     updatePlaylistButtons();
     updateFavPlaylistButtons();
 }
@@ -122,8 +123,9 @@ function pauseMusic() {
     playBtn.setAttribute("title", "Play");
     music.pause();
 
+    updatePlaylist();
     updatePlaylistButtons();
-    updateFavPlaylistButtons();  // Burada da güncelleme yapılmalı
+    updateFavPlaylistButtons();
 }
 
 // şarkıyı yükler
@@ -154,53 +156,42 @@ function changeMusic(direction) {
     playMusic();
 }
 
-// shuffle
-function shuffleMusic() {
-    const currentSong = songs[musicIndex];
-    const remainingSongs = songs.filter(song => song.path !== currentSong.path);
-
-    shuffledSongs = shuffleArray(remainingSongs);
-
-    shuffledSongs.unshift(currentSong);
-
-    currentPlayingIndex = 0;
-
-    updatePlaylistUI(shuffledSongs);
-    updatePlaylistButtons();
-    updateFavPlaylistButtons();
-}
-
-// shuffle sorgular ve class değiştirir
 function toggleShuffle() {
     isShuffling = !isShuffling;
     shuffleBtn.classList.toggle("active", isShuffling);
     shuffleBtn.setAttribute("title", isShuffling ? "Shuffle On" : "Shuffle Off");
 
     if (isShuffling) {
-        shuffleMusic();
+        shuffledSongs = [...songs];
+        const currentSong = shuffledSongs.splice(musicIndex, 1)[0];
+        shuffleArray(shuffledSongs);
+        shuffledSongs.unshift(currentSong);
+        currentPlayingIndex = 0;
     } else {
-        currentPlayingIndex = musicIndex; 
-        updatePlaylistUI(songs);
+        currentPlayingIndex = musicIndex;
     }
-
+    updatePlaylist();
     updatePlaylistButtons();
     updateFavPlaylistButtons();
 }
 
+// Fisher-Yates shuffle algorithm
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [array[i],
+            array[j]] = [array[j], array[i]];
     }
-    return array;
 }
 
-// Shuffle playlist günceller //
-function updatePlaylistUI(songsToDisplay) {
+// Update
+function updatePlaylist() {
     const playlist = document.getElementById("playlist");
-    playlist.innerHTML = ""; 
+    playlist.innerHTML = "";
 
-    songsToDisplay.forEach((song, index) => {
+    const displayedSongs = isShuffling ? shuffledSongs : songs;
+
+    displayedSongs.forEach((song, index) => {
         const li = document.createElement("li");
         li.innerHTML = `
           <img src="${song.cover}" alt="${song.displayName} cover" class="playlist-cover">
@@ -208,12 +199,23 @@ function updatePlaylistUI(songsToDisplay) {
               <strong class="playlist-title">${song.displayName}</strong><br>
               <p class="playlist-artist">${song.artist}</p>
           </div>
-          <i class="fa-solid fa-play play-button control-icons-playlist" title="Play"></i>
-        `;
+          <i class="fa-solid fa-play play-button control-icons-playlist" title="Play" id="play"></i>
+      `;
         playlist.appendChild(li);
-    });
 
-    playPauseOnPlaylist();
+        li.addEventListener("click", () => {
+            const clickedSong = displayedSongs[index];
+            if (clickedSong.path === songs[musicIndex].path) {
+                togglePlay();
+            } else {
+                musicIndex = songs.findIndex((s) => s.path === clickedSong.path);
+                loadMusic(songs[musicIndex]);
+                playMusic();
+                updatePlaylistButtons();
+                updateFavPlaylistButtons();
+            }
+        });
+    });
 }
 
 // repeat sorgular ve class değiştirir
@@ -566,8 +568,11 @@ function loadFavorites() {
 // Play/Pause synchronization //
 function updatePlaylistButtons() {
     const buttons = document.querySelectorAll("#playlist .play-button");
+    const displayedSongs = isShuffling ? shuffledSongs : songs;
+
     buttons.forEach((btn, index) => {
-        if (index === musicIndex && isPlaying) {
+        const isCurrentSong = displayedSongs[index].path === songs[musicIndex].path;
+        if (isCurrentSong && isPlaying) {
             btn.classList.replace("fa-play", "fa-pause");
         } else {
             btn.classList.replace("fa-pause", "fa-play");
@@ -589,7 +594,7 @@ function updateFavPlaylistButtons() {
     });
 }
 
-// fav ve all arası menü geçişleri
+// fav ve all arası menü geçişleri //
 function openTab(tabId) {
     const tabPanes = document.querySelectorAll(".tab-pane");
     tabPanes.forEach((pane) => {
@@ -607,15 +612,13 @@ function openTab(tabId) {
         .classList.add("active");
 }
 
-// Mobil cihaz olup olmadığını kontrol etme fonksiyonu
-// Cihazın mobil olup olmadığını kontrol eden fonksiyon
 
-// Cihazın mobil olup olmadığını kontrol eden fonksiyon
+// Cihazın mobil olup olmadığını kontrol eden fonksiyon //
 function isMobileDevice() {
     return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
-// Volume slider'ı gizleyen fonksiyon
+// Volume slider'ı gizleyen fonksiyon //
 function hideVolumeSlider() {
     if (isMobileDevice()) {
         const volumeSlider = document.getElementById('volume-slider');
@@ -629,36 +632,24 @@ function hideVolumeSlider() {
     }
 }
 
-// Sayfa yüklendiğinde kontrolü gerçekleştir
-document.addEventListener('DOMContentLoaded', hideVolumeSlider);
-
-// Sayfa yüklendiğinde kontrolü gerçekleştir
-document.addEventListener('DOMContentLoaded', hideVolumeSlider);
-
-// Sayfa yüklendiğinde kontrolü gerçekleştir
-document.addEventListener('DOMContentLoaded', hideVolumeSlider);
 
 // Event Listeners //
 playBtn.addEventListener("click", togglePlay);
 prevBtn.addEventListener("click", () => {
     if (music.currentTime < 10) {
-        // Şarkının ilk 10 saniyesindeyse önceki şarkıya geç
         changeMusic(-1);
     } else {
-        // Şarkının 10 saniye sonrasında ise şarkıyı baştan başlat
         music.currentTime = 0;
         if (!isPlaying) {
-            music.play(); // Şarkıyı baştan başlat ve çalmaya başla
+            music.play(); 
             isPlaying = true;
             playBtn.classList.replace("fa-play", "fa-pause");
             playBtn.setAttribute("title", "Pause");
         }
     }
 });
-
-
-nextBtn.addEventListener("click", () => changeMusic(1));
 shuffleBtn.addEventListener("click", toggleShuffle);
+nextBtn.addEventListener("click", () => changeMusic(1));
 repeatBtn.addEventListener("click", toggleRepeat);
 music.addEventListener("timeupdate", updateProgressBar);
 playerProgress.addEventListener("click", setProgressBar);
@@ -673,6 +664,7 @@ togglePlaylistBtn.addEventListener("click", () => {
 toggleLyricBtn.addEventListener("click", () => {
     toggleLyricBtn.classList.toggle("active");
 });
+document.addEventListener('DOMContentLoaded', hideVolumeSlider);
 
 // Media Player Shortcuts //
 document.addEventListener('keydown', function(event) {

@@ -15,6 +15,9 @@
 ### Demo Screeshot
 
 ![Music Player Desktop Demo](./assets/demo.png)
+<br />
+<br />
+![Music Player Desktop Demo](./assets/demo-2.png)
 
 ### Contact
 
